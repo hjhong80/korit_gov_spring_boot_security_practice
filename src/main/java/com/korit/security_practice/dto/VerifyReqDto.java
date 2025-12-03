@@ -7,13 +7,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class VerifyReqDto {
-    private Integer userId;
     private String verifyCode;
-
-    public Verify toEntity() {
-        return Verify.builder()
-                .userId(userId)
-                .verifyCode(verifyCode)
-                .build();
-    }
 }
