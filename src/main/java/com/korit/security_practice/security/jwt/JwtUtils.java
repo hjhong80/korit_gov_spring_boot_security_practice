@@ -29,6 +29,16 @@ public class JwtUtils {
                 .compact();
     }
 
+    public String generateVerifyToken(String id) {
+        System.out.println("JwtUtils : generateVerifyToken");
+        return Jwts.builder()
+                .subject("VerifyToken")
+                .id(id)
+                .expiration(new Date(new Date().getTime()+(1000L * 60L * 5L)))   // 5분
+                .signWith(KEY)
+                .compact();
+    }
+
     public Claims getClaims(String token) throws JwtException {
         System.out.println("JwtUtils : getClaims");
         JwtParserBuilder jwtParserBuilder = Jwts.parser();

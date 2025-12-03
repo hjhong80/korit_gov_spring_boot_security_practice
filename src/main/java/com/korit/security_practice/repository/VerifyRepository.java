@@ -20,6 +20,13 @@ public class VerifyRepository {
     }
 
     public Optional<Verify> findVerify(Integer userId) {
-        return verifyMapper.findVerify(userId);
+        System.out.println(userId);
+        Optional<Verify> verify = verifyMapper.findVerify(userId);
+        System.out.println(verify.isPresent());
+        return verify;
+    }
+
+    public int updateVerify(Verify verify) {
+        return verifyMapper.updateVerify(verify);
     }
 }

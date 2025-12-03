@@ -5,8 +5,10 @@ import com.korit.security_practice.dto.ModifyPasswordReqDto;
 import com.korit.security_practice.dto.ModifyUsernameReqDto;
 import com.korit.security_practice.dto.VerifyReqDto;
 import com.korit.security_practice.entity.User;
+import com.korit.security_practice.entity.UserRole;
 import com.korit.security_practice.entity.Verify;
 import com.korit.security_practice.repository.UserRepository;
+import com.korit.security_practice.repository.UserRoleRepository;
 import com.korit.security_practice.repository.VerifyRepository;
 import com.korit.security_practice.security.model.Principal;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AccountService {
     private final UserRepository userRepository;
+    private final UserRoleRepository userRoleRepository;
     private final VerifyRepository verifyRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -109,14 +112,52 @@ public class AccountService {
                 .userId(principal.getUserId())
                 .verifyCode(sb.toString())
                 .build();
+        int result;
         if (verifyRepository.findVerify(verify.getUserId()).isEmpty()) {
-            int result = verifyRepository.addVerify(verify);
+            System.out.println("updateVerifyCode : 유저 없음");
+            result = verifyRepository.addVerify(verify);
+        } else {
+            System.out.println("updateVerifyCode : 유저 있음");
+            result = verifyRepository.updateVerify(verify);
         }
+        if (result != 1) {
+            System.out.println("updateVerifyCode : 인증코드 생성 실패");
+            return new ApiRespDto<>("failed","인증코드 생성에 실패하였습니다.", null);
 
-        return new ApiRespDto<>("","", "");
+        }
+        return new ApiRespDto<>("success","인증코드 생성에 성공하였습니다.", verify);
     }
 
-    public ApiRespDto<?> accountRegistry() {
-        return new ApiRespDto<>("","","");
+    public ApiRespDto<?> accountRegistry(VerifyReqDto verifyReqDto, Principal principal) {
+        Optional<User> foundUser = userRepository.findById(verifyReqDto.getUserId());
+        if (foundUser.isEmpty()) {
+            System.out.println("accountRegistry : 유저 검색 실패");
+            return new ApiRespDto<>("failed","존재하지 않는 사용자 입니다.",null);
+
+        }
+        if (!foundUser.get().getUserId().equals(principal.getUserId())) {
+            System.out.println("accountRegistry : 잘못된 접근");
+            return new ApiRespDto<>("failed","잘못된 접근 입니다.",null);
+        }
+
+        Optional<Verify> foundVerify = verifyRepository.findVerify(foundUser.get().getUserId());
+        if (foundVerify.isEmpty()) {
+            System.out.println("accountRegistry : 인증 정보 없음");
+            return new ApiRespDto<>("failed","인증 정보가 없습니다.",foundUser.get().getEmail());
+        }
+        if (!foundVerify.get().getVerifyCode().equals(verifyReqDto.getVerifyCode())) {
+            System.out.println("accountRegistry : 인증 코드 불일치");
+            return new ApiRespDto<>("failed","인증 정보가 잘못되었습니다.",foundUser.get().getEmail());
+        }
+        UserRole userRole = UserRole.builder()
+                .userId(verifyReqDto.getUserId())
+                .roleId(2)
+                .build();
+        int result = userRoleRepository.updateUserRole(userRole);
+        if (result != 1) {
+            System.out.println("accountRegistry : UserRole 추가 실패");
+            return new ApiRespDto<>("failed","인증에 실패하였습니다.",foundUser.get().getEmail());
+        }
+        return new ApiRespDto<>("success","인증에 성공하였습니다.", foundUser.get().getEmail());
     }
 }

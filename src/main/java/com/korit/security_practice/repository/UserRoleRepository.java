@@ -24,6 +24,10 @@ public class UserRoleRepository {
         return result;
     }
 
+    public int updateUserRole(UserRole userRole) {
+        return userRoleMapper.updateUserRole(userRole);
+    }
+
 //    public int userRegistry(UserRole userRole) {
 //        int result;
 //        return 0;

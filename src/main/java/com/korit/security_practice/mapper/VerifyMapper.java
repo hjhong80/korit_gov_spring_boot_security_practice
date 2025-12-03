@@ -11,4 +11,5 @@ public interface VerifyMapper {
     int addVerify(Verify verify);
     int deleteVerify(Verify verify);
     Optional<Verify> findVerify(Integer userId);
+    int updateVerify(Verify verify);
 }

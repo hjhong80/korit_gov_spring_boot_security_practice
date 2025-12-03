@@ -2,6 +2,7 @@ package com.korit.security_practice.controller;
 
 import com.korit.security_practice.dto.ModifyPasswordReqDto;
 import com.korit.security_practice.dto.ModifyUsernameReqDto;
+import com.korit.security_practice.dto.VerifyReqDto;
 import com.korit.security_practice.security.model.Principal;
 import com.korit.security_practice.service.AccountService;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,12 @@ public class AccountController {
     public ResponseEntity<?> updateVerifyCode(@AuthenticationPrincipal Principal principal) {
         System.out.println("AccountController : updateVerifyCode");
         return ResponseEntity.ok(accountService.updateVerifyCode(principal));
+    }
+
+    @PostMapping("/registry")
+    public ResponseEntity<?> accountRegistry(@RequestBody VerifyReqDto verifyReqDto,@AuthenticationPrincipal Principal principal) {
+        System.out.println("AccountController : accountRegistry");
+        return ResponseEntity.ok(accountService.accountRegistry(verifyReqDto, principal));
     }
 
 

@@ -3,7 +3,6 @@ package com.korit.security_practice.service;
 import com.korit.security_practice.dto.ApiRespDto;
 import com.korit.security_practice.dto.SigninReqDto;
 import com.korit.security_practice.dto.SignupReqDto;
-import com.korit.security_practice.entity.Role;
 import com.korit.security_practice.entity.User;
 import com.korit.security_practice.entity.UserRole;
 import com.korit.security_practice.repository.UserRepository;
@@ -13,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
